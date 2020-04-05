@@ -1,7 +1,6 @@
 var mongoose = require('mongoose'); // Install it from Package.json
 
 var bookingSchema = mongoose.Schema({
-    id: Number,
     date: String,
     buses:
     [
@@ -29,6 +28,4 @@ var bookingSchema = mongoose.Schema({
     ]
 });
 
-var booking = mongoose.model('bookingmodel' , bookingSchema);
-
-module.exports = booking; 
+module.exports =  mongoose.model('bookings' , bookingSchema);

@@ -9,9 +9,12 @@
     "mongoose": "^5.9.7",
     "npm": "^6.14.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
+    
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
