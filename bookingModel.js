@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'); // Install it from Package.json
 
 var bookingSchema = mongoose.Schema({
-    date: String,
+    date: {type: String, index:true},
     buses:
     [
 	      {   
