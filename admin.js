@@ -10,13 +10,13 @@ var run = function(){
         for(var i=1;i<=40;i++){
            var ticket ={};
            ticket.seatNo = i;
-           ticket.ticket = i;
-           ticket.personDetail = {"name":i+"mukesh"};
+           ticket.ticket = "5"+"4"+"123"+i;
+           ticket.personDetail = null;
            ticket.status = "false";
            bus.tickets.push(ticket);
         }
         
-        var doc = {date:"5/4/2021"}
+        var doc = {date:"5/4/2020"}
         doc.buses=[];
         doc.buses.push(bus);
         booking.insertMany(doc, function(err,res){

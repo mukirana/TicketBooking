@@ -20,8 +20,6 @@ var bookingSchema = mongoose.Schema({
 		                address: String
 		           },
 		          status: Boolean,
-		          bookingTime: String,
-		          cancellationTime: String
 		        }
 		    ]
 	     }
