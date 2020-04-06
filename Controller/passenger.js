@@ -71,6 +71,10 @@ exports.cancelTicket = function(req,res){
             }) 
           } else { 
             booking.find({date:"5/4/2020" , 'buses.busId':123},(error,docs)=>{
+                if(error){
+                    res.send(error);
+                    return;
+                }
                 var seatNo = req.body.seatNo;
   
                 var ticket = docs[0].buses[0].tickets[seatNo-1];  
@@ -167,7 +171,7 @@ exports.ticketHolder = function(req,res){
                         }
                         else
                         res.send(buses.tickets[i].personDetail)
-                        
+
                         return;
                     }
                 }
