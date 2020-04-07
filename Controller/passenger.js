@@ -25,6 +25,10 @@ exports.bookTicket = function(req,res){
 
         booking.find({date:"5/4/2020" , 'buses.busId':123},(error,docs)=>{
             var seatNo = req.body.seatNo;
+            if(docs==null || docs==undefined || docs[0]===undefined){
+                res.send({message:"bus not present"})
+                return;
+            }
             var ticket = docs[0].buses[0].tickets[seatNo-1];  
             var ticketId = ticket.ticket;
             console.log("ticektId"+ticketId)
@@ -76,7 +80,10 @@ exports.cancelTicket = function(req,res){
                     return;
                 }
                 var seatNo = req.body.seatNo;
-  
+                if(docs==null || docs==undefined || docs[0]===undefined){
+                    res.send({message:"bus not present"})
+                    return;
+                }
                 var ticket = docs[0].buses[0].tickets[seatNo-1];  
                 if(ticket.status==false){
                     var response = {message:"It is already canceled"};
@@ -112,10 +119,23 @@ exports.getOpenTicket = function(req,res){
             res.send(error);
             return;
         }
+        if(docs==null || docs==undefined || docs[0]===undefined){
+            res.send({message:"bus not present"})
+            return;
+        }
         var buses = docs[0].buses;
         for(var i=0; i<buses.length;i++){
          if(buses[i].busId==123){
-             var openSeats={OpenSeats:buses[i].OpenSeats}
+            
+             var openTickets =[];
+             
+             for(var ticket=0;ticket<40;ticket++){
+                // console.log(buses[i].tickets[ticket].status)
+                 if(buses[i].tickets[ticket].status===false){
+                     openTickets.push({seatNo:buses[i].tickets[ticket].seatNo})
+                 }
+             }
+             var openSeats={OpenSeatsCount:buses[i].OpenSeats,TicketNo:openTickets}
              res.send(openSeats);
              return;
          }  
@@ -130,11 +150,26 @@ exports.getClosedTicket = function(req,res){
             res.send(error);
             return;
         }
+        console.log(docs[0])
+        if(docs==null || docs==undefined || docs[0]===undefined){
+            res.send({message:"bus not present"})
+            return;
+        }
+        console.log(docs[0].buses)
         var buses = docs[0].buses;
+        
        for(var i=0; i<buses.length;i++){
         if(buses[i].busId==123){
-            var openSeats={ClosedSeats:40-buses[i].OpenSeats}
-            res.send(openSeats);
+            var closeTickets =[];
+             
+             for(var ticket=0;ticket<40;ticket++){
+                 console.log(buses[i].tickets[ticket].status)
+                 if(buses[i].tickets[ticket].status===true){
+                     closeTickets.push({seatNo:buses[i].tickets[ticket].seatNo})
+                 }
+             }
+             var tickets={ClosedSeatsCount:40-buses[i].OpenSeats,TicketNo:closeTickets}
+             res.send(tickets);
             return;
         }  
        }
@@ -160,6 +195,10 @@ exports.ticketHolder = function(req,res){
             booking.find({date:"5/4/2020", 'buses.busId':123},(error,docs)=>{
                 if(error){
                     res.send(error);
+                    return;
+                }
+                if(docs==null || docs==undefined || docs[0]===undefined){
+                    res.send({message:"bus not present"})
                     return;
                 }
                 var buses = docs[0].buses[0];
@@ -199,6 +238,10 @@ exports.ticketStatus=  function(req,res){
         booking.find({date:"5/4/2020", 'buses.busId':123},(error,docs)=>{
             if(error){
                 res.send(error);
+                return;
+            }
+            if(docs==null || docs==undefined || docs[0]===undefined){
+                res.send({message:"bus not present"})
                 return;
             }
             var buses = docs[0].buses[0];

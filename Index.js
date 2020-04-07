@@ -42,6 +42,6 @@ var admin = require('./Controller/admin')
      app.post('/updateTicket',admin.updateTicket)
 
 
-const port = 8080;
+const port =process.env.PORT || '8080';
 app.listen(port,()=> {
-console.log('listen port 8080')})
+console.log(`listen port ${port}`)})
