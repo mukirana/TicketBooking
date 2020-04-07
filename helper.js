@@ -19,12 +19,13 @@ var run = function(){
         var doc = {date:"5/4/2020"}
         doc.buses=[];
         doc.buses.push(bus);
-        
+
         booking.insertMany(doc, function(err,res){
             if (err) throw err;
             console.log("Document inserted");
         });
     
 }
+
 
 module.exports = run;

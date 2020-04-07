@@ -41,6 +41,8 @@ var admin = require('./Controller/admin')
     // Admin api for resetting the server
      app.post('/updateTicket',admin.updateTicket)
 
+     app.post('/addUsers', admin.addUser)
+
 
 const port =process.env.PORT || '8080';
 app.listen(port,()=> {

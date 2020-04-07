@@ -1,5 +1,5 @@
-var mongoose = require('mongoose'); // Install it from Package.json
-
+var mongoose = require('mongoose'); 
+const Schema = mongoose.Schema;
 var bookingSchema = mongoose.Schema({
     date: {type: String, index:true},
     buses:
@@ -13,11 +13,8 @@ var bookingSchema = mongoose.Schema({
 		          ticket: Number,
 		          personDetail: 
 		            {
-		                name: String,
-		                contact: Number,
-		                age: Number,
-		                gender: String,
-		                address: String
+                        type: Schema.Types.ObjectId,
+                        ref: 'user'
 		           },
 		          status: Boolean,
 		        }

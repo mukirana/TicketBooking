@@ -1,15 +1,13 @@
 var booking = require('../bookingModel.js');
+var user = require('../userModel.js')
 const Joi = require('joi')
 
-exports.bookTicket = function(req,res){          
+exports.bookTicket =  function(req,res){          
     const{body} = req;
     const bookingSchema= Joi.object().keys({
        seatNo: Joi.number().min(1).max(40).required(),
        name : Joi.string().required(),
-       contact : Joi.number().min(1000000000).max(9999999999).required(),
-       gender: Joi.string().optional(),
-       address: Joi.string().alphanum().required(),
-       age: Joi.number().min(1).max(100).required()
+       contact : Joi.number().min(1000000000).max(9999999999).required()
 
     });
 
@@ -31,7 +29,6 @@ exports.bookTicket = function(req,res){
             }
             var ticket = docs[0].buses[0].tickets[seatNo-1];  
             var ticketId = ticket.ticket;
-            console.log("ticektId"+ticketId)
             if(ticket.status==true){
                 var response = {message:"This seat is already booked"};
                 res.send(response);
@@ -39,18 +36,34 @@ exports.bookTicket = function(req,res){
             }
             var name = req.body.name ;
             var contact = req.body.contact;
-            var age = req.body.age;
-            var gender = req.body.gender || null;
-            var address = req.body.address;
             var value = `buses.$.tickets.${seatNo-1}.status`
-            var newvalues = {$inc: {"buses.$.OpenSeats": -1 }, $set:{[value]:true , [`buses.$.tickets.${seatNo-1}.personDetail`]:{"name":name,"contact":contact,"age":age,"gender":gender,"address":address}}};
-            booking.update({date:"5/4/2020", 'buses.busId':123}, newvalues, function(err, doc) {
-                       if(err){
-                           res.send(err)
-                       }
-                       else
-                       res.send({message:"success",ticketId: ticketId})
-            });
+            user.find({name:name,contact:contact},(error,data)=>{
+                 if(error){
+                     res.send(error)
+                     return;
+                 }
+               
+                 if(data===null || data===undefined || data[0]===undefined){
+                    res.send({message:"Invalid user"})
+                    return;
+                 }
+                
+
+                 var newvalues = {$inc: {"buses.$.OpenSeats": -1 }, $set:{[value]:true , [`buses.$.tickets.${seatNo-1}.personDetail`]:data[0]._id}};
+                 booking.update({date:"5/4/2020", 'buses.busId':123}, newvalues, function(err, doc) {
+                    if(err){
+                        res.send(err)
+                    }
+                    else
+                    res.send({message:"success",ticketId: ticketId})
+                });
+
+                //  res.send(docs)
+                //  return;
+            })
+
+           
+           
 
        }); 
     } 
@@ -93,11 +106,18 @@ exports.cancelTicket = function(req,res){
                 }
                var name = req.body.name;
                var contact = req.body.contact;
-               if(ticket.personDetail.name !==name && ticket.personDetail.contact!==contact){
-                   var resonse = {message:"Invalid user"}
-                   res.send(response);
+               user.find({name:name,contact:contact},(error,data)=>{
+                if(error){
+                    res.send(error)
+                    return;
+                }
+              
+                if(data===null || data===undefined || data[0]===undefined || !data[0]._id.equals(ticket.personDetail)){
+                    console.log(data[0]._id!=ticket.personDetail)
+                   res.send({message:"Invalid user"})
                    return;
-               }
+                }
+               
                 var value = `buses.$.tickets.${seatNo-1}.status`
                 var newvalues = {$inc: {"buses.$.OpenSeats": 1 }, $set:{[value]:false , [`buses.$.tickets.${seatNo-1}.personDetail`]:null}};
                 booking.update({date:"5/4/2020", 'buses.busId':123}, newvalues, function(err, doc) {
@@ -107,6 +127,10 @@ exports.cancelTicket = function(req,res){
                            else
                            res.send({message: "ticket cancelled sucessfully"})
                 });
+              
+               //  res.send(docs)
+               //  return;
+           })
   
            });         
           }   
@@ -205,13 +229,30 @@ exports.ticketHolder = function(req,res){
                 for(var i=0; i<buses.tickets.length;i++){
                     if(buses.tickets[i].ticket==req.params.ticketId){
                         var ticketHolderDetail = buses.tickets[i].personDetail;                          
-                        if(ticketHolderDetail==null || ticketHolderDetail.name === undefined){
-                            res.send({message:"Invalid ticket details.."})
+                        if(ticketHolderDetail==null){
+                            console.log(ticketHolderDetail)
+                            res.send({message:"Invalid ticket details...."})
+                            return;
                         }
-                        else
-                        res.send(buses.tickets[i].personDetail)
+                        else{
+                            const ticketId = buses.tickets[i].personDetail;
+                            console.log(ticketId)
+                            user.find({_id:[ticketId]},(err,data)=>{
+                                if(err){
+                                    res.send(error)
+                                    return
+                                }
+                                if(data==null || data==undefined){
+                                    res.send({message:"No data present"})
+                                    return
+                                }
+                                else{
+                                  res.send(data)
+                                }
+                            })
+                            return
+                        }
 
-                        return;
                     }
                 }
                 res.send({message:"Invalid ticket details.."});
