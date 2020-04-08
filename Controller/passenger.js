@@ -101,7 +101,7 @@ exports.cancelTicket = function(req,res){
                 if(ticket.status==false){
                     var response = {message:"It is already canceled"};
                     res.send(response);
-                    console.log(ticket.status)
+                   // console.log(ticket.status)
                     return;
                 }
                var name = req.body.name;
@@ -113,7 +113,7 @@ exports.cancelTicket = function(req,res){
                 }
               
                 if(data===null || data===undefined || data[0]===undefined || !data[0]._id.equals(ticket.personDetail)){
-                    console.log(data[0]._id!=ticket.personDetail)
+                  //  console.log(data[0]._id!=ticket.personDetail)
                    res.send({message:"Invalid user"})
                    return;
                 }
@@ -174,12 +174,12 @@ exports.getClosedTicket = function(req,res){
             res.send(error);
             return;
         }
-        console.log(docs[0])
+      //  console.log(docs[0])
         if(docs==null || docs==undefined || docs[0]===undefined){
             res.send({message:"bus not present"})
             return;
         }
-        console.log(docs[0].buses)
+     //   console.log(docs[0].buses)
         var buses = docs[0].buses;
         
        for(var i=0; i<buses.length;i++){
@@ -187,7 +187,7 @@ exports.getClosedTicket = function(req,res){
             var closeTickets =[];
              
              for(var ticket=0;ticket<40;ticket++){
-                 console.log(buses[i].tickets[ticket].status)
+              //   console.log(buses[i].tickets[ticket].status)
                  if(buses[i].tickets[ticket].status===true){
                      closeTickets.push({seatNo:buses[i].tickets[ticket].seatNo})
                  }
@@ -230,13 +230,13 @@ exports.ticketHolder = function(req,res){
                     if(buses.tickets[i].ticket==req.params.ticketId){
                         var ticketHolderDetail = buses.tickets[i].personDetail;                          
                         if(ticketHolderDetail==null){
-                            console.log(ticketHolderDetail)
+                          //  console.log(ticketHolderDetail)
                             res.send({message:"Invalid ticket details...."})
                             return;
                         }
                         else{
                             const ticketId = buses.tickets[i].personDetail;
-                            console.log(ticketId)
+                         //   console.log(ticketId)
                             user.find({_id:[ticketId]},(err,data)=>{
                                 if(err){
                                     res.send(error)
